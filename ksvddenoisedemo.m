@@ -25,7 +25,7 @@ disp('  using K-SVD denoising. The function displays the original, noisy, and de
 disp('  images, and shows the resulting trained dictionary.');
 disp(' ');
 
-
+addpath('./l1Solvers')
 %% prompt user for image %%
 
 pathstr = fileparts(which('ksvddenoisedemo'));
@@ -72,7 +72,7 @@ params.dictsize = 256;
 params.sigma = sigma;
 params.maxval = 255;
 params.trainnum = 40000;
-params.iternum = 20;
+params.iternum = 2;
 params.memusage = 'high';
 
 
