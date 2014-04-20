@@ -1,4 +1,9 @@
-aml
-===
+Advanced Machine Learning Project
+=================================
 
-Advanced Machine Learning Project work
+
+1. Build Dependencies
+=====================
+
+cd private
+matlab -nodesktop -nosplash -r 'make'
