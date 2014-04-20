@@ -511,8 +511,10 @@ function [atom,gamma_j,data_indices,unused_sigs,replaced_atoms] = optimize_atom(
 global exactsvd
 
 % data samples which use the atom, and the corresponding nonzero
-% coefficients in Gamma
-[gamma_j, data_indices] = sprow(Gamma, j);
+% in coefficients Gamma
+data_indices = find(Gamma(j,:));
+gamma_j = Gamma(j,data_indices);
+%[gamma_j, data_indices] = sprow(Gamma, j);
 
 if (length(data_indices) < 1)
   maxsignals = 5000;
@@ -553,25 +555,15 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function Gamma = sparsecode(data,D,XtX,G,thresh)
-
-global CODE_SPARSITY codemode
-global MEM_HIGH memusage
-global ompfunc ompparams
-
-if (memusage < MEM_HIGH)
-  Gamma = ompfunc(D,data,G,thresh,ompparams{:});
-  
-else  % memusage is high
-  
-  if (codemode == CODE_SPARSITY)
-    Gamma = ompfunc(D'*data,G,thresh,ompparams{:});
-    
-  else
-    Gamma = ompfunc(D'*data,XtX,G,thresh,ompparams{:});
-  end
-  
-end
-
+	[m,n] = size(data);
+	[m1, n1] = size(D);
+	Gamma = []
+	for i=1:n
+		if(mod(i,1000) == 0)
+			i
+        end
+        Gamma = [Gamma SolveOMP(D, data(:,i), 'stoppingCriterion', 3)];
+    end
 end
 
 
