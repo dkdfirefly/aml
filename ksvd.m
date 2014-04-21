@@ -421,8 +421,13 @@ end
 
 
 %%%%%%%%%%%%%%%%%  main loop  %%%%%%%%%%%%%%%%%
+imnum = params.imnum;
+sigma = params.sigma;
+im = params.im;
 
-
+f = fopen(params.resultsFile, 'a');
+fprintf(f, 'ImageNum=%d, Sigma=%d, NoisyPSNR=%.2f\n',imnum, sigma,params.NoisyPSNR);
+fclose(f);
 for iter = 1:iternum
   
   G = [];
@@ -430,6 +435,8 @@ for iter = 1:iternum
     G = D'*D;
   end
   
+  printStatus = sprintf('Status: Image=%d, Sigma=%d, Iter=%d\n', imnum, sigma, iter);
+  disp(printStatus); 
   
   %%%%%  sparse coding  %%%%%
   
@@ -475,6 +482,7 @@ for iter = 1:iternum
   
   [D,cleared_atoms] = cleardict(D,Gamma,data,muthresh,unused_sigs,replaced_atoms);
   
+ 
   
   %%%%%  print info  %%%%%
   
@@ -494,7 +502,50 @@ for iter = 1:iternum
     if (msgdelta>0), disp(' '); end
   end
   
+  %%%%%  denoise the signal  %%%%%
+
+    if (~isfield(params,'lambda'))
+      params.lambda = params.maxval/(10*params.sigma);
+    end
+
+    params.dict = D;
+
+    if (msgdelta>0)
+      disp('OMP denoising...');
+    end
+
+    % call the appropriate ompdenoise function
+    if (params.DenoiseMode==1)
+      [y,nz] = ompdenoise1(params,msgdelta);
+    elseif (params.DenoiseMode==2)
+      [y,nz] = ompdenoise2(params,msgdelta);
+    elseif (params.DenoiseMode==3)
+      [y,nz] = ompdenoise3(params,msgdelta);
+    else
+      [y,nz] = ompdenoise(params,msgdelta);
+    end
+    
+    dict = D;        
+    imout = y;
+    
+    dictimg = showdict(dict,[1 1]*params.blocksize,round(sqrt(params.dictsize)),round(sqrt(params.dictsize)),'lines','highcontrast');
+    figure('visible','off'); imshow(imresize(dictimg,2,'nearest'));
+    title('Trained dictionary');
+    saveas(gcf(), strcat(params.dirName, 'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-trainedDict', '-Iter-', num2str(iter),'.png'), 'png');
+
+    figure('visible', 'off'); imshow(imout/params.maxval);
+    DenoisedPSNR = 20*log10(params.maxval * sqrt(numel(im)) / norm(im(:)-imout(:)));
+    title(sprintf('Denoised image, PSNR: %.2fdB', DenoisedPSNR ));
+    saveas(gcf(), strcat(params.dirName,'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-DenoisedImage', '-Iter-', num2str(iter),'.png'), 'png');
+    
+    f = fopen(params.resultsFile, 'a');
+    fprintf(f, 'ImageNum=%d, Sigma=%d, Iter=%d, DeNoisedPSNR=%.2f\n',imnum, sigma, iter, DenoisedPSNR);
+    fclose(f);
+  
 end
+f = fopen(params.resultsFile, 'a');
+fprintf(f, '\n');
+fclose(f);
 
 
 end

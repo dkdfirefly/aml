@@ -287,6 +287,7 @@ end
 if (msgdelta>0)
   disp('KSVD training...');
 end
+params.DenoiseMode = p;
 D = ksvd(params,verbose,msgdelta);
 
 

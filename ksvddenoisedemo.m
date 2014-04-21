@@ -45,7 +45,7 @@ imnum = 0;
 %  imnum = sscanf(imnum, '%d');
 %end
 
-for imnum =1:2
+for imnum =1
     imgname = fullfile(pathstr, 'images', imglist(imnum).name);
 
 
@@ -72,36 +72,32 @@ for imnum =1:2
         params.dictsize = 256;
         params.sigma = sigma;
         params.maxval = 255;
-        params.trainnum = 2000;%40000
-        params.iternum = 2;
+        params.trainnum = 40000;%40000
+        params.iternum = 5;
         params.memusage = 'high';
-
-
-
-        % denoise!
-        disp('Performing K-SVD denoising...');
-        [imout, dict] = ksvddenoise(params);
-
-
+        params.imnum = imnum;
+        params.im = im;
+        params.dirName = 'results/';
+        params.resultsFile = strcat(params.dirName, 'results.txt');
 
         % show results %
 
-        dictimg = showdict(dict,[1 1]*params.blocksize,round(sqrt(params.dictsize)),round(sqrt(params.dictsize)),'lines','highcontrast');
-        figure('visible','off'); imshow(imresize(dictimg,2,'nearest'));
-        title('Trained dictionary');
-        saveas(gcf(), strcat('trainedDict-','Image-',num2str(imnum),'-Sigma-',num2str(sigma),'.png'), 'png');
-
+        
         figure('visible','off'); imshow(im/params.maxval);
         title('Original image');
-        saveas(gcf(), strcat('Original-','Image-',num2str(imnum),'-Sigma-',num2str(sigma),'.png'), 'png');
+        saveas(gcf(), strcat(params.dirName,'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-Original','.png'), 'png');
 
         figure('visible', 'off'); imshow(imnoise/params.maxval); 
-        title(sprintf('Noisy image, PSNR = %.2fdB', 20*log10(params.maxval * sqrt(numel(im)) / norm(im(:)-imnoise(:))) ));
-        saveas(gcf(), strcat('NoisyImage-','Image-',num2str(imnum),'-Sigma-',num2str(sigma),'.png'), 'png');
+        NoisyPSNR = 20*log10(params.maxval * sqrt(numel(im)) / norm(im(:)-imnoise(:)));
+        title(sprintf('Noisy image, PSNR = %.2fdB', NoisyPSNR ));
+        saveas(gcf(), strcat(params.dirName,'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-NoisyImage','.png'), 'png');
 
-        figure('visible', 'off'); imshow(imout/params.maxval);
-        title(sprintf('Denoised image, PSNR: %.2fdB', 20*log10(params.maxval * sqrt(numel(im)) / norm(im(:)-imout(:))) ));
-        saveas(gcf(), strcat('DenoisedImage-','Image-',num2str(imnum),'-Sigma-',num2str(sigma),'.png'), 'png');
+        % denoise!
+        
+        params.NoisyPSNR = NoisyPSNR;
+        disp('Performing K-SVD denoising...');
+        [imout, dict] = ksvddenoise(params);
+
     end
 end
 exit;
