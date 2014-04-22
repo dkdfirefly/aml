@@ -7,8 +7,8 @@ Methods:
 3. Dual Augmented Lagrange Method: SolveDALM
 4. Truncated Newton Interior-Point Method: SolveL1LS
 5. Primal Augmented Lagrange Method: SolvePALM
-6. Matching Pursuit: 
-7. Feature Sign: l1ls_featuresign.m
+6. Matching Pursuit: SolveMP
+7. Feature Sign: l1ls_featuresign
 
 1. Build Dependencies
 =====================
