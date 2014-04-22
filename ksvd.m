@@ -613,7 +613,7 @@ function Gamma = sparsecode(data,D,XtX,G,thresh)
 		if(mod(i,1000) == 0)
 			i
         end
-        Gamma = [Gamma SolveOMP(D, data(:,i), 'stoppingCriterion', 3)];
+        Gamma = [Gamma SolveDALM(D, data(:,i), 'stoppingCriterion', 3)];
     end
 end
 
