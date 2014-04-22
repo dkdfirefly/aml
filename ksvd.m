@@ -610,10 +610,8 @@ function Gamma = sparsecode(data,D,XtX,G,thresh)
 	[m1, n1] = size(D);
 	Gamma = []
 	for i=1:n
-		if(mod(i,1000) == 0)
-			i
-        end
-        Gamma = [Gamma SolveOMP(D, data(:,i), 'stoppingCriterion', 3)];
+		  i
+        Gamma = [Gamma SolveL1LS(D, data(:,i), 'stoppingCriterion', 3)];
     end
 end
 
