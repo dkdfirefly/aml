@@ -427,7 +427,7 @@ im = params.im;
 
 f = fopen(params.resultsFile, 'a');
 iter= 0;
-fprintf(f, '%d, %d, %d, %d, %.2f, 0\n',imnum, sigma, params.dictsize, iter, params.NoisyPSNR);
+fprintf(f, '%d, %d, %d, %d, %.2f, 0, %s\n',imnum, sigma, params.dictsize, iter, params.NoisyPSNR, params.method);
 fclose(f);
 for iter = 1:iternum
   
@@ -436,7 +436,7 @@ for iter = 1:iternum
     G = D'*D;
   end
   
-  printStatus = sprintf('Status: Image=%d, Sigma=%d, DictSize=%d Iter=%d\n', imnum, sigma, params.dictsize, iter);
+  printStatus = sprintf('Status: Image=%d, Sigma=%d, DictSize=%d, Iter=%d, Method=%s\n', imnum, sigma, params.dictsize, iter, params.method);
   disp(printStatus); 
   
   %%%%%  sparse coding  %%%%%
@@ -541,7 +541,7 @@ for iter = 1:iternum
     saveas(gcf(), strcat(params.dirName,'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-DictSize-', num2str(params.dictsize),'-DenoisedImage', '-Iter-', num2str(iter),'.png'), 'png');
     
     f = fopen(params.resultsFile, 'a');
-    fprintf(f, '%d, %d, %d, %d, %.2f, %.2f\n',imnum, sigma, params.dictsize, iter, DenoisedPSNR, sparsecode_time);
+    fprintf(f, '%d, %d, %d, %d, %.2f, %.2f, %s\n',imnum, sigma, params.dictsize, iter, DenoisedPSNR, sparsecode_time, params.method);
     fclose(f);
   
 end
@@ -612,7 +612,7 @@ function Gamma = sparsecode(data,D,XtX,G,thresh)
 		if mod(i,1000) == 0
 		    i
 		end
-        Gamma = [Gamma SolveL1LS(D, data(:,i), 'stoppingCriterion', 3)];
+        Gamma = [Gamma SolveOMP(D, data(:,i), 'stoppingCriterion', 3)];
     end
 end
 

@@ -41,13 +41,13 @@ params.trainnum = 8192;%40000
 params.iternum = 8;
 params.memusage = 'high';
 params.blocksize = 8;
-params.method = 'CHANGE-HERE AND IN KSVD';
+params.method = 'OMP';%CHANGE-HERE AND IN KSVD
 params.dirName = strcat('results', params.method, '/');
 params.resultsFile = strcat(params.dirName, 'results-', params.method, '.csv');
 
 mkdir(params.dirName)
 f = fopen(params.resultsFile, 'w');
-fprintf(f, 'ImageNum, Sigma, DictSize, Iter, PSNR(db), Time\n');
+fprintf(f, 'ImageNum, Sigma, DictSize, Iter, PSNR(db), Time, Method\n');
 fclose(f);
 
 
