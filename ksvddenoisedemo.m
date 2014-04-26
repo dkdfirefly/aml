@@ -46,7 +46,7 @@ params.dirName = strcat('results', params.method, '/');
 params.resultsFile = strcat(params.dirName, 'results-', params.method, '.csv');
 
 f = fopen(params.resultsFile, 'w');
-fprintf(f, 'ImageNum, Sigma, DictSize, Iter, DeNoisedPSNR, Time\n');
+fprintf(f, 'ImageNum, Sigma, DictSize, Iter, PSNR(db), Time\n');
 fclose(f);
 
 
