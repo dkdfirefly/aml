@@ -33,14 +33,14 @@ STOPPING_SPARSE_SUPPORT = 2;
 STOPPING_OBJECTIVE_VALUE = 3;
 STOPPING_SUBGRADIENT = 4;
 STOPPING_INCREMENTS = 5 ;
-STOPPING_DEFAULT = STOPPING_INCREMENTS;
-
+%STOPPING_DEFAULT = STOPPING_INCREMENTS;
+STOPPING_DEFAULT = STOPPING_OBJECTIVE_VALUE;
 stoppingCriterion = STOPPING_DEFAULT;
 
 % Initialize parameters
 [m,n] = size(A) ;
 
-tol = 1e-6 ;
+tol = 1e-3 ;
 tol_apg = 1e-6 ;
 
 
@@ -195,9 +195,7 @@ while ~converged_main
 %     end
     
     if ~converged_main && nIter >= maxIter
-        if DEBUG
             disp('Maximum Iterations Reached') ;
-        end
         converged_main = 1 ;
         
     end

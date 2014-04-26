@@ -68,7 +68,7 @@ STOPPING_DEFAULT = STOPPING_OBJECTIVE_VALUE;
 
 stoppingCriterion = STOPPING_DEFAULT;
 
-OptTol = 1e-5;
+OptTol = 1e-3;
 lambdaStop = 0;
 maxIters = length(y);
 [n,N]= size(A);

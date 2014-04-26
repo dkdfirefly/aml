@@ -41,7 +41,7 @@ function [sols, iters, activationHist] = SolveMP(A, y, N, maxIters, lambdaStop, 
 %
 
 if nargin < 8,
-	OptTol = 1e-5;
+	OptTol = 1e-3;
 end
 if nargin < 7,
     verbose = 0;
