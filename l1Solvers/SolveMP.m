@@ -55,6 +55,9 @@ end
 if nargin < 4,
     maxIters = 100*length(y);
 end
+if nargin < 3,
+    N = size(A,2);
+end
 
 explicitA = ~(ischar(A) || isa(A, 'function_handle'));
 n = length(y);

@@ -88,7 +88,7 @@ for imnum =1:2
         
         params.NoisyPSNR = NoisyPSNR;
         
-        for dictSize =[64]
+        for dictSize =[256]
             
             %% set parameters %%
             params.dictsize = dictSize;
