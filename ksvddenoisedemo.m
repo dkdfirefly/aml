@@ -66,7 +66,7 @@ for imnum =1:2
     title('Original image');
     saveas(gcf(), strcat(params.dirName,'Image-',num2str(imnum),'-Original','.png'), 'png');
 
-    for sigma = [20, 50]
+    for sigma = [10, 20, 50]
         % generate noisy image %
         disp(' ');
         disp('Generating noisy image...');
@@ -88,7 +88,7 @@ for imnum =1:2
         
         params.NoisyPSNR = NoisyPSNR;
         
-        for dictSize =[256]
+        for dictSize =[64 128 256]
             
             %% set parameters %%
             params.dictsize = dictSize;
