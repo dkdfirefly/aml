@@ -426,7 +426,8 @@ sigma = params.sigma;
 im = params.im;
 
 f = fopen(params.resultsFile, 'a');
-fprintf(f, 'ImageNum=%d, Sigma=%d, NoisyPSNR=%.2f\n',imnum, sigma,params.NoisyPSNR);
+iter= 0;
+fprintf(f, '%d, %d, %d, %d, %.2f, 0\n',imnum, sigma, params.dictsize, iter, params.NoisyPSNR);
 fclose(f);
 for iter = 1:iternum
   
@@ -435,13 +436,14 @@ for iter = 1:iternum
     G = D'*D;
   end
   
-  printStatus = sprintf('Status: Image=%d, Sigma=%d, Iter=%d\n', imnum, sigma, iter);
+  printStatus = sprintf('Status: Image=%d, Sigma=%d, DictSize=%d Iter=%d\n', imnum, sigma, params.dictsize, iter);
   disp(printStatus); 
   
   %%%%%  sparse coding  %%%%%
   
+  sparsecode_time = cputime;
   Gamma = sparsecode(data,D,XtX,G,thresh);
-  
+  sparsecode_time = cputime - sparsecode_time;
   
   %%%%%  dictionary update  %%%%%
   
@@ -531,21 +533,18 @@ for iter = 1:iternum
     dictimg = showdict(dict,[1 1]*params.blocksize,round(sqrt(params.dictsize)),round(sqrt(params.dictsize)),'lines','highcontrast');
     figure('visible','off'); imshow(imresize(dictimg,2,'nearest'));
     title('Trained dictionary');
-    saveas(gcf(), strcat(params.dirName, 'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-trainedDict', '-Iter-', num2str(iter),'.png'), 'png');
+    saveas(gcf(), strcat(params.dirName, 'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-DictSize-', num2str(params.dictsize),'-trainedDict', '-Iter-', num2str(iter),'.png'), 'png');
 
     figure('visible', 'off'); imshow(imout/params.maxval);
     DenoisedPSNR = 20*log10(params.maxval * sqrt(numel(im)) / norm(im(:)-imout(:)));
     title(sprintf('Denoised image, PSNR: %.2fdB', DenoisedPSNR ));
-    saveas(gcf(), strcat(params.dirName,'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-DenoisedImage', '-Iter-', num2str(iter),'.png'), 'png');
+    saveas(gcf(), strcat(params.dirName,'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-DictSize-', num2str(params.dictsize),'-DenoisedImage', '-Iter-', num2str(iter),'.png'), 'png');
     
     f = fopen(params.resultsFile, 'a');
-    fprintf(f, 'ImageNum=%d, Sigma=%d, Iter=%d, DeNoisedPSNR=%.2f\n',imnum, sigma, iter, DenoisedPSNR);
+    fprintf(f, '%d, %d, %d, %d, %.2f, %.2f\n',imnum, sigma, params.dictsize, iter, DenoisedPSNR, sparsecode_time);
     fclose(f);
   
 end
-f = fopen(params.resultsFile, 'a');
-fprintf(f, '\n');
-fclose(f);
 
 
 end
@@ -610,7 +609,9 @@ function Gamma = sparsecode(data,D,XtX,G,thresh)
 	[m1, n1] = size(D);
 	Gamma = []
 	for i=1:n
-		  i
+		if mod(i,1000) == 0
+		    i
+		end
         Gamma = [Gamma SolveL1LS(D, data(:,i), 'stoppingCriterion', 3)];
     end
 end

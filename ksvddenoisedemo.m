@@ -32,61 +32,52 @@ pathstr = fileparts(which('ksvddenoisedemo'));
 dirname = fullfile(pathstr, 'images', '*.png');
 imglist = dir(dirname);
 
-%disp('  Available test images:');
-%disp(' ');
-%for k = 1:length(imglist)
-%  printf('  %d. %s', k, imglist(k).name);
-%end
-%disp(' ');
-
 imnum = 0;
-%while (~isnumeric(imnum) || ~iswhole(imnum) || imnum<1 || imnum>length(imglist))
-%  imnum = input(sprintf('  Image to denoise (%d-%d): ', 1, length(imglist)), 's');
-%  imnum = sscanf(imnum, '%d');
-%end
 
-for imnum =1
+%% set parameters %%
+
+params.maxval = 255;
+params.trainnum = 8192;%40000
+params.iternum = 8;
+params.memusage = 'high';
+params.blocksize = 8;
+params.method = 'OMP';
+params.dirName = strcat('results', params.method, '/');
+params.resultsFile = strcat(params.dirName, 'results-', params.method, '.csv');
+
+f = fopen(params.resultsFile, 'w');
+fprintf(f, 'ImageNum, Sigma, DictSize, Iter, DeNoisedPSNR, Time\n');
+fclose(f);
+
+
+mkdir(params.dirName)
+for imnum =1:2
     imgname = fullfile(pathstr, 'images', imglist(imnum).name);
+    im = imread(imgname);
+    im = double(im);
 
+    %% set parameters %%
 
+    params.imnum = imnum;
+    params.im = im;
 
-    %% generate noisy image %%
+    figure('visible','off'); imshow(im/params.maxval);
+    title('Original image');
+    saveas(gcf(), strcat(params.dirName,'Image-',num2str(imnum),'-Original','.png'), 'png');
 
-    sigma = 20;
-    for sigma = [20, 80]
+    for sigma = [20, 50]
+        % generate noisy image %
         disp(' ');
         disp('Generating noisy image...');
-
-        im = imread(imgname);
-        im = double(im);
 
         n = randn(size(im)) * sigma;
         imnoise = im + n;
 
-
-
         %% set parameters %%
 
         params.x = imnoise;
-        params.blocksize = 8;
-        params.dictsize = 256;
         params.sigma = sigma;
-        params.maxval = 255;
-        params.trainnum = 2000;%40000
-        params.iternum = 8;
-        params.memusage = 'high';
-        params.imnum = imnum;
-        params.im = im;
-        params.dirName = 'results/';
-        params.resultsFile = strcat(params.dirName, 'results.txt');
-
-        % show results %
-
         
-        figure('visible','off'); imshow(im/params.maxval);
-        title('Original image');
-        saveas(gcf(), strcat(params.dirName,'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-Original','.png'), 'png');
-
         figure('visible', 'off'); imshow(imnoise/params.maxval); 
         NoisyPSNR = 20*log10(params.maxval * sqrt(numel(im)) / norm(im(:)-imnoise(:)));
         title(sprintf('Noisy image, PSNR = %.2fdB', NoisyPSNR ));
@@ -95,9 +86,17 @@ for imnum =1
         % denoise!
         
         params.NoisyPSNR = NoisyPSNR;
-        disp('Performing K-SVD denoising...');
-        [imout, dict] = ksvddenoise(params);
+        
+        for dictSize =[64]
+            
+            %% set parameters %%
+            params.dictsize = dictSize;
+            
+            disp('Performing K-SVD denoising...');
+            [imout, dict] = ksvddenoise(params);
 
+            close all;
+        end
     end
 end
 exit;
