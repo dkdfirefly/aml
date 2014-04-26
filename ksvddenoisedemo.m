@@ -41,16 +41,17 @@ params.trainnum = 8192;%40000
 params.iternum = 8;
 params.memusage = 'high';
 params.blocksize = 8;
-params.method = 'OMP';
+params.method = 'CHANGE-HERE AND IN KSVD';
 params.dirName = strcat('results', params.method, '/');
 params.resultsFile = strcat(params.dirName, 'results-', params.method, '.csv');
 
+mkdir(params.dirName)
 f = fopen(params.resultsFile, 'w');
 fprintf(f, 'ImageNum, Sigma, DictSize, Iter, PSNR(db), Time\n');
 fclose(f);
 
 
-mkdir(params.dirName)
+
 for imnum =1:2
     imgname = fullfile(pathstr, 'images', imglist(imnum).name);
     im = imread(imgname);
