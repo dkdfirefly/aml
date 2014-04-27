@@ -109,5 +109,5 @@ end
 
 
 if (nargout==0)
-  %imshow(x);
+  imshow(x);
 end
