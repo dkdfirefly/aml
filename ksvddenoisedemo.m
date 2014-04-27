@@ -64,7 +64,7 @@ for imnum =1:2
 
     %figure('visible','off'); %imshow(im/params.maxval);
     %title('Original image');
-    imwrite(im/params.maxval, strcat(params.dirName,'Image-',num2str(imnum),'-Original','png'),'png');
+    imwrite(im/params.maxval, strcat(params.dirName,'Image-',num2str(imnum),'-Original','.png'),'png');
     %saveas(gcf(), strcat(params.dirName,'Image-',num2str(imnum),'-Original','.png'), 'png');
 
     for sigma = [10, 20, 50]
