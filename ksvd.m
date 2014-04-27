@@ -530,15 +530,17 @@ for iter = 1:iternum
     dict = D;        
     imout = y;
     
-    dictimg = showdict(dict,[1 1]*params.blocksize,round(sqrt(params.dictsize)),round(sqrt(params.dictsize)),'lines','highcontrast');
-    figure('visible','off'); imshow(imresize(dictimg,2,'nearest'));
-    title('Trained dictionary');
-    saveas(gcf(), strcat(params.dirName, 'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-DictSize-', num2str(params.dictsize),'-trainedDict', '-Iter-', num2str(iter),'.png'), 'png');
+    %dictimg = showdict(dict,[1 1]*params.blocksize,round(sqrt(params.dictsize)),round(sqrt(params.dictsize)),'lines','highcontrast');
+    figure('visible','off'); %imshow(imresize(dictimg,2,'nearest'));
+    %title('Trained dictionary');
+    imwrite(imresize(dictimg,2,'nearest'), strcat(params.dirName, 'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-DictSize-', num2str(params.dictsize),'-trainedDict', '-Iter-', num2str(iter),'.png'), 'png');
+    %saveas(gcf(), strcat(params.dirName, 'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-DictSize-', num2str(params.dictsize),'-trainedDict', '-Iter-', num2str(iter),'.png'), 'png');
 
-    figure('visible', 'off'); imshow(imout/params.maxval);
+    %figure('visible', 'off'); %imshow(imout/params.maxval);
     DenoisedPSNR = 20*log10(params.maxval * sqrt(numel(im)) / norm(im(:)-imout(:)));
-    title(sprintf('Denoised image, PSNR: %.2fdB', DenoisedPSNR ));
-    saveas(gcf(), strcat(params.dirName,'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-DictSize-', num2str(params.dictsize),'-DenoisedImage', '-Iter-', num2str(iter),'.png'), 'png');
+    %title(sprintf('Denoised image, PSNR: %.2fdB', DenoisedPSNR ));
+    imwrite(imout/params.maxval, strcat(params.dirName,'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-DictSize-', num2str(params.dictsize),'-DenoisedImage', '-Iter-', num2str(iter),'.png'), 'png');
+    %saveas(gcf(), strcat(params.dirName,'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-DictSize-', num2str(params.dictsize),'-DenoisedImage', '-Iter-', num2str(iter),'.png'), 'png');
     
     f = fopen(params.resultsFile, 'a');
     fprintf(f, '%d, %d, %d, %d, %.2f, %.2f, %s\n',imnum, sigma, params.dictsize, iter, DenoisedPSNR, sparsecode_time, params.method);

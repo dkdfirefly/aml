@@ -62,9 +62,10 @@ for imnum =1:2
     params.imnum = imnum;
     params.im = im;
 
-    figure('visible','off'); imshow(im/params.maxval);
-    title('Original image');
-    saveas(gcf(), strcat(params.dirName,'Image-',num2str(imnum),'-Original','.png'), 'png');
+    %figure('visible','off'); %imshow(im/params.maxval);
+    %title('Original image');
+    imwrite(im/params.maxval, strcat(params.dirName,'Image-',num2str(imnum),'-Original','png'),'png');
+    %saveas(gcf(), strcat(params.dirName,'Image-',num2str(imnum),'-Original','.png'), 'png');
 
     for sigma = [10, 20, 50]
         % generate noisy image %
@@ -79,10 +80,11 @@ for imnum =1:2
         params.x = imnoise;
         params.sigma = sigma;
         
-        figure('visible', 'off'); imshow(imnoise/params.maxval); 
+        %figure('visible', 'off'); %imshow(imnoise/params.maxval); 
         NoisyPSNR = 20*log10(params.maxval * sqrt(numel(im)) / norm(im(:)-imnoise(:)));
-        title(sprintf('Noisy image, PSNR = %.2fdB', NoisyPSNR ));
-        saveas(gcf(), strcat(params.dirName,'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-NoisyImage','.png'), 'png');
+        %title(sprintf('Noisy image, PSNR = %.2fdB', NoisyPSNR ));
+        imwrite(imnoise/params.maxval,strcat(params.dirName,'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-NoisyImage','.png'), 'png');
+        %saveas(gcf(), strcat(params.dirName,'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-NoisyImage','.png'), 'png');
 
         % denoise!
         
