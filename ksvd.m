@@ -531,7 +531,7 @@ for iter = 1:iternum
     imout = y;
     
     %dictimg = showdict(dict,[1 1]*params.blocksize,round(sqrt(params.dictsize)),round(sqrt(params.dictsize)),'lines','highcontrast');
-    figure('visible','off'); %imshow(imresize(dictimg,2,'nearest'));
+    %figure('visible','off'); %imshow(imresize(dictimg,2,'nearest'));
     %title('Trained dictionary');
     imwrite(imresize(dictimg,2,'nearest'), strcat(params.dirName, 'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-DictSize-', num2str(params.dictsize),'-trainedDict', '-Iter-', num2str(iter),'.png'), 'png');
     %saveas(gcf(), strcat(params.dirName, 'Image-',num2str(imnum),'-Sigma-',num2str(sigma),'-DictSize-', num2str(params.dictsize),'-trainedDict', '-Iter-', num2str(iter),'.png'), 'png');
