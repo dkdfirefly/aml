@@ -41,7 +41,7 @@ params.trainnum = 8192;%40000
 params.iternum = 8;
 params.memusage = 'high';
 params.blocksize = 8;
-params.method = 'OMP';%CHANGE-HERE AND IN KSVD
+params.method = 'MP';%CHANGE-HERE AND IN KSVD
 params.dirName = strcat('results', params.method, '/');
 params.resultsFile = strcat(params.dirName, 'results-', params.method, '.csv');
 

@@ -612,7 +612,7 @@ function Gamma = sparsecode(data,D,XtX,G,thresh)
 		if mod(i,1000) == 0
 		    i
 		end
-        Gamma = [Gamma SolveOMP(D, data(:,i))];
+        Gamma = [Gamma SolveMP(D, data(:,i))];
     end
 end
 

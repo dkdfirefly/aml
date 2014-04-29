@@ -53,7 +53,7 @@ if nargin < 5,
     lambdaStop = 0;
 end
 if nargin < 4,
-    maxIters = 100*length(y);
+    maxIters = 1*length(y);
 end
 if nargin < 3,
     N = size(A,2);
