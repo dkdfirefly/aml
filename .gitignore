@@ -1,6 +1,7 @@
 log*
 *.mexa64
 *.aux
-*.bbl
 *.log
 *.out
+*.dvi
+*.blg

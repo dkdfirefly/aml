@@ -1,0 +1,34 @@
+\begin{thebibliography}{1}
+
+\bibitem{aharon2006svd}
+Michal Aharon, Michael Elad, and Alfred Bruckstein.
+\newblock -svd: An algorithm for designing overcomplete dictionaries for sparse
+  representation.
+\newblock {\em Signal Processing, IEEE Transactions on}, 54(11):4311--4322,
+  2006.
+
+\bibitem{lee2007efficient}
+Honglak Lee, Alexis Battle, Rajat Raina, and Andrew~Y Ng.
+\newblock Efficient sparse coding algorithms.
+\newblock {\em Advances in neural information processing systems}, 19:801,
+  2007.
+
+\bibitem{mallat1993matching}
+St{\'e}phane~G Mallat and Zhifeng Zhang.
+\newblock Matching pursuits with time-frequency dictionaries.
+\newblock {\em Signal Processing, IEEE Transactions on}, 41(12):3397--3415,
+  1993.
+
+\bibitem{pati1993orthogonal}
+Yagyensh~Chandra Pati, Ramin Rezaiifar, and PS~Krishnaprasad.
+\newblock Orthogonal matching pursuit: Recursive function approximation with
+  applications to wavelet decomposition.
+\newblock In {\em Signals, Systems and Computers, 1993. 1993 Conference Record
+  of The Twenty-Seventh Asilomar Conference on}, pages 40--44. IEEE, 1993.
+
+\bibitem{yang2010fast}
+Allen~Y Yang, Zihan Zhou, Arvind Ganesh, S~Shankar Sastry, and Yi~Ma.
+\newblock Fast l1-minimization algorithms for robust face recognition.
+\newblock {\em arXiv preprint arXiv:1007.3753}, 2010.
+
+\end{thebibliography}
