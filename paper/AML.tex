@@ -72,35 +72,68 @@ Sarah Panda\\
 
 \maketitle
 
+
 \begin{abstract}
-TODO: Write Abstract
+Abstract - 
+Dictionary learning involves solving the following optimization problem: in 
+||x α|| ||α||m D, α −D 22+λ 1 where  is the input signal,   is the dictionary and   is the sparse representation of the signal. 
+x D α  
+The problem of image restoration has been addressed with a multitude of approaches. All the approaches to solve the optimisation problem fall under the 3 broad categories of  Relaxation (Basis Pursuit), Greedy approach(Matching Pursuit) or Hybrid methods. Our project  primarily focuses on the Relaxation methodology.
+Here, both   and   are unknown. Mairal, Julien, et al, 2009 present an online learning D α   algorithm[1] which involves two optimization problem. First, assumes the   to be available and D   minimizes over . This is known as the sparse coding problem. Second, updates the   after α D   obtaining  . α  
+Mairal, Julien, et al, 2009 use LARS[2]  to solve the sparse coding problem. We propose to  compare the performance of the online dictionary learning algorithm by solving the sparse coding  problem using methods[1][5] like feature­sign [3], FISTA[4], Interior point, Sequential Shrinkage or  Iterative Shrinkage methods and Stochastic Gradient Descent in the context of image  restoration.
 \end{abstract}
 
 \vspace{-.2cm}
 \section{Introduction}
-\label{EGintroduction}
 \vspace{-.2cm}
-TODO: Write Introduciton
+1 Introduction : Problem of Image denoising
 
-\textbf{Example Citation:} Kalman Filter~\cite{kalman} and smoother~\cite{RTS}, 
-measurement models~\cite{Bell1994}, systems with nonlinear inequality
-constraints~\cite{Bell2008}, robust Kalman smoothing~\cite{RobustSparseArxiv, StArxiv, Aravkin2011tac}, and smoothing of sparse systems~\cite{Angelosante2009}. 
+\section{Intro to Dictionary learning}
+2  Intro to Dictionary learning
+  -	KSVD-  general KSVD explaination
+  -	Online Dictionary Learning
 
-\textbf{Example Reference to Section:}Section \ref{Section2}
+\section{KSVD}
+3  KSVD for learning dictionaries
+
+\section{Sparse Coding}
+4 Sparse coding problem explained in deep and ways to approximate the sparse code
+  -	Basis pursuit
+  -	Matching pursuit 
 
 
-\vspace{-.2cm}
-\section{Section 2}
-\label{Section2}
-\vspace{-.2cm}
+5 Summary of sparse coding techniques used:
+\subsection{FISTA}
+  -	FISTA
+\subsection{MP}
+  -	MP
+\subsection{OMP}
+  -	OMP
+\subsection{ALM}
+  -	ALM
+\subsection{Feature Sign}
+  -	Feature Sign
+\subsection{L1LS}
+  -	L1LS
 
-\vspace{-.2cm}
-\section{Section 3}
-\label{Secton3}
-\vspace{-.2cm}
+\section{Experimental Setup}
+6 Experimental setup
 
-\bibliographystyle{plain}
-\bibliography{filter}
+\section{Findings}
+7 Findings
+
+\section{Analysis}
+8 Analysis
+
+\section{Conclusion}
+9 Conclusion
+
+10 References
+•	     Yang, Allen Y., et al. "Fast l1-minimization algorithms for robust face recognition." arXiv preprint arXiv:1007.3753 (2010).
+•	Lee, Honglak, et al. "Efficient sparse coding algorithms." Advances in neural information processing systems 19 (2007): 801.
+•	Mallat, Stéphane G., and Zhifeng Zhang. "Matching pursuits with time-frequency dictionaries." Signal Processing, IEEE Transactions on 41.12 (1993): 3397-3415.
+•	Pati, Yagyensh Chandra, Ramin Rezaiifar, and P. S. Krishnaprasad. "Orthogonal matching pursuit: Recursive function approximation with applications to wavelet decomposition." Signals, Systems and Computers, 1993. 1993 Conference Record of The Twenty-Seventh Asilomar Conference on. IEEE, 1993.
+•	Aharon, Michal, Michael Elad, and Alfred Bruckstein. "-svd: An algorithm for designing overcomplete dictionaries for sparse representation." Signal Processing, IEEE Transactions on 54.11 (2006): 4311-4322.
 
 \newpage
 \section{Appendix}
