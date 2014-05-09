@@ -30,6 +30,12 @@ Magnus~R Hestenes.
 \newblock {\em Journal of optimization theory and applications}, 4(5):303--320,
   1969.
 
+\bibitem{l1lskim2007efficient}
+Seung-Jean Kim, Kwangmoo Koh, Michael Lustig, and Stephen Boyd.
+\newblock An efficient method for compressed sensing.
+\newblock In {\em Image Processing, 2007. ICIP 2007. IEEE International
+  Conference on}, volume~3, pages III--117. IEEE, 2007.
+
 \bibitem{lee2007efficient}
 Honglak Lee, Alexis Battle, Rajat Raina, and Andrew~Y Ng.
 \newblock Efficient sparse coding algorithms.
