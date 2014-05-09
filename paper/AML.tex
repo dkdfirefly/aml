@@ -74,12 +74,7 @@ Sarah Panda\\
 
 
 \begin{abstract}
-Dictionary learning involves solving the following optimization problem: in 
-||x α|| ||α||m D, α −D 22+λ 1 where  is the input signal,   is the dictionary and   is the sparse representation of the signal. 
-x D α  
-The problem of image restoration has been addressed with a multitude of approaches. All the approaches to solve the optimisation problem fall under the 3 broad categories of  Relaxation (Basis Pursuit), Greedy approach(Matching Pursuit) or Hybrid methods. Our project  primarily focuses on the Relaxation methodology.
-Here, both   and   are unknown.  Mairal, Julien, et al, 2009 present an online learning D α   algorithm[1] which involves two optimization problem. First, assumes the   to be available and D   minimizes over . This is known as the sparse coding problem. Second, updates the   after α D   obtaining  . α  
-Mairal, Julien, et al, 2009 use LARS[2]  to solve the sparse coding problem. We propose to  compare the performance of the online dictionary learning algorithm by solving the sparse coding  problem using methods[1][5] like feature­sign [3], FISTA[4], Interior point, Sequential Shrinkage or  Iterative Shrinkage methods and Stochastic Gradient Descent in the context of image  restoration.
+Sparse Coding, is the modeling of data vectors as linear combination of basis elements or Dictionary. This paper focuses on learning the Dictionary from 
 \end{abstract}
 
 \vspace{-.2cm}
@@ -88,10 +83,38 @@ Mairal, Julien, et al, 2009 use LARS[2]  to solve the sparse coding problem. We 
 Introduction : Problem of Image denoising
 
 \section{Intro to Dictionary learning}
-Intro to Dictionary learning
-  -	KSVD-  general KSVD explaination
-  -	Online Dictionary Learning
+Dictionary Learning is a focus area in the Signal Processing domain. A dictionary is used for the sparse representation or approximation of signals. A dictionary $D$, is an $NxK$ matrix that contains $K$ prototype signals called atoms. A signal $y_0$ can be represented by a linear combination of a small number of these atoms. For any signal $y_0$ and dictionary $D$ there must exist a sparse vector $x \in R^K$ such that:
+\begin{align}
+y_0 = D*x
+\end{align}   
+There will be cases where we cannot exactly represent the signal with a linear combinations of atoms from a finite dictionary. In such a case we find an approximation of the signal, $y$ such that:
+\begin{align}
+y = D*x \\
+\|y - y_0\| < \epsilon
+\end{align} 
+Dictionary Learning is a problem of finding a dictionary such that the approximation of many vectors in the training set are as good as possible. 
 
+For a finite number of training vectors, $L$ each of length $N$ the aim of Dictionary Learning is to find both a Dictionary $D$, of size $NxK$ and the $L$ corresponding coefficients vectors of length $K$.
+
+In this paper we will apply the problem of Dictionary Learning on noisy image. The image is broken into $8x8$ pixel patches and this $N = 64$ pixel vector is approximated by the linear combination of atoms of the Learned Dictionary.
+
+\subsection{Problem Statement}
+Classical dictionary learning techniques consider a finite training set of signals $Y = [y_1, y_2, \ldots, y_L]$ int $R^{NxL}$ and optimize the empirical cost function:
+\begin{align}
+f(D) &= \frac{1}{L}\sum_{i=1}^{L}l(y_i, D)
+\end{align} 
+where $D \in R^{NxK}$ is the dictionary and $l$ is the loss function such that $l(y,D)$ is small if $D$ is a good at representing the signal $x$. 
+
+$l(y,D)$ can be define as the optimal value of the $l_1$ or $l_0$ sparse coding problem. See section on Sparse coding for more details, TODO: rephrase this. We consider the $l_1$ norm for illustration in this section.
+\begin{align}
+l(y, D) = \min_{x \in R^K} \frac{1}{2}\|y - Dx\| + \lambda \|x\|_1
+\end{align}
+$\lambda$ is the regularization parameter. The problem of minimizing the empirical cost function $f(D)$ is not convex with respect to $D$. It can be rewritten as a joint optimization problem with respect to dictionary $D$ and the coefficients $x = [x_1, x_2, \ldots, x_L]$, which is not jointly convex, but convex with respect to each of the two variables $D$ and $x$ when the other one is fixed.
+\begin{align}
+\min_{D\in R^{NxK}, x\in R^{KxL}} \frac{1}{L}\sum_{i=1}^{L} \left( \frac{1}{2}\|y_i - Dx_i\|^2_2 + \lambda \|x\|_1 \right)
+\end{align} 
+A natural approach to solving this problem is to alternate between the two variables, minimizing one over the other while keeping the other fixed. 
+ 
 \section{KSVD}
 KSVD for learning dictionaries
 
@@ -111,9 +134,51 @@ Sparse coding problem explained in deep and ways to approximate the sparse code
 \subsection{ALM}
   -	ALM
 \subsection{Feature Sign}
-  -	Feature Sign
-\subsection{L1LS}
-  -	L1LS
+Feature sign aims to solve the following L-1 regularized sparse coding problem
+\begin{align}
+\min_x f(x) = \|y - Dx\|^2 + \lambda\|x\|_1
+\end{align}
+The intuition behind this algorithm is that if we know the signs(positive, negative or zero) of $x_i$ at the optimal value we can replace $\|x_i\|$ by either $x_i$ if $x_i > 0$, $-x_i$ if $x_i < 0$ or 0 if $x_i = 0$. Considering only non zero coefficients this problem reduces to a standard quadratic optimization problem. This problem can them be solved analytically and efficiently. Feature sign algorithm tries to search for the signs of the coefficients. Given any such search results, it efficiently solves the resulting unconstrained quadratic problem. Further the algorithm systematically refines the guess if it turns out to be initially incorrect.
+
+\begin{enumerate}
+\item \textbf{Initialize} $x := 0$, $\theta : 0$ and active set $:= \{\}$, $\theta_i \in \{-1,0,1\}$ denotes sign($x_i$)
+\item From zero coefficients of $x$, select $i = $ arg$\max_i |\frac{\partial\|y - Dx\|^2}{\partial x_i}|$\\
+Activate $x_i$ (add $i$ to active set) only if it locally improves the objective
+\begin{enumerate}
+\item If $|\frac{\partial\|y - Dx\|^2}{\partial x_i}| > \lambda$; set $\theta_i := -1$, active set $:= \{i\} \cup$active set
+\item If $|\frac{\partial\|y - Dx\|^2}{\partial x_i}| < -\lambda$; set $\theta_i := 1$, active set $:= \{i\} \cup$active set
+\end{enumerate}
+\item \textbf{Feature-Sign step:}\\
+Let $\hat{D}$ be a submatrix of $D$ that contains only the columns corresponding to the active set.\\
+Let $\hat{x}$ and $\hat{\theta}$ be sub vectors of $x$ and $\theta$ corresponding to the active set.\\
+Compute the analytical solution to the resulting quadratic problem\\
+$\hat{x}_{new} := (\hat{D}^T\hat{D})^{-1}(\hat{D}^Ty - \lambda \hat{\theta}/2)$\\
+Perform a discrete line search on the closed line segment from $\hat{x}$ to $\hat{x}_{new}$:\\
+- Check the objective value at $\hat{x}_{new}$ and all points where any coefficient changes sign.\\
+- Update $\hat{x}$ (and all corresponding entries in $x$) to the point with the lowest objective value\\
+Remove zero coefficients of $\hat{x}$ from the active set and update $\theta := $sign($x$)
+\item \textbf{Check the optimality conditions}:
+\begin{enumerate}
+\item Optimality condition for nonzero coefficients: $|\frac{\partial\|y - Dx\|^2}{\partial x_i}| + \lambda$sign($x_i$) $=  0$ $\forall x_i \neq 0$\\
+If this condition is not satisfied, go to Step 3(without any new activation); else check condition (b).
+\item  Optimality condition for zero coefficients: : $|\frac{\partial\|y - Dx\|^2}{\partial x_i}| + \lambda$sign($x_i$) $\leq 0$ $\forall x_i = 0$\\
+If this condition is not satisfied go to Step 3; otherwise return $x$ as the solution.
+\end{enumerate} 
+\end{enumerate}
+
+
+
+\subsection{TNIPM}
+In \cite{l1lskim2007efficient}, the authors formulate a Truncated Newton Interior Point method. The algorithm solves the L-1 regularised problem:
+\begin{align}
+\min_x f(x) = \|y - Dx\|^2 + \lambda\|x\|_1
+\end{align}
+This problem can be transformed to a convex quadratic program with linear inequality constraints,
+\begin{align}
+\min \|y - Dx\|^2 + \sum_{i= 1}^{K}\lambda u_i	\\
+\text{subject to:} -u_i \leq x_i \leq u_i, \forall i \in \{i,K\}
+\end{align}
+The aim of this algorithm is to solve this quadratic program using the Newton's method. Since solving the Newton system exactly is computationally expensive for large L-1 problems, TNIPM uses an iterative method, Preconditioned Conjugate Gradient (PCG) to approximately solve the Newton system and develops an interior point method to solve the L-1 problem. 
 
 \section{Experimental Setup}
 
