@@ -1,4 +1,4 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
 \bibitem{aharon2006svd}
 Michal Aharon, Michael Elad, and Alfred Bruckstein.
@@ -6,6 +6,29 @@ Michal Aharon, Michael Elad, and Alfred Bruckstein.
   representation.
 \newblock {\em Signal Processing, IEEE Transactions on}, 54(11):4311--4322,
   2006.
+
+\bibitem{beck2009fast}
+Amir Beck and Marc Teboulle.
+\newblock A fast iterative shrinkage-thresholding algorithm for linear inverse
+  problems.
+\newblock {\em SIAM Journal on Imaging Sciences}, 2(1):183--202, 2009.
+
+\bibitem{bertsekasnonlinear}
+Dimitri~P Bertsekas.
+\newblock Nonlinear programming. 1999.
+\newblock {\em Athena Scientific}.
+
+\bibitem{courant1943variational}
+Richard Courant et~al.
+\newblock Variational methods for the solution of problems of equilibrium and
+  vibrations.
+\newblock {\em Bull. Amer. Math. Soc}, 49(1):1--23, 1943.
+
+\bibitem{hestenes1969multiplier}
+Magnus~R Hestenes.
+\newblock Multiplier and gradient methods.
+\newblock {\em Journal of optimization theory and applications}, 4(5):303--320,
+  1969.
 
 \bibitem{lee2007efficient}
 Honglak Lee, Alexis Battle, Rajat Raina, and Andrew~Y Ng.
@@ -25,6 +48,28 @@ Yagyensh~Chandra Pati, Ramin Rezaiifar, and PS~Krishnaprasad.
   applications to wavelet decomposition.
 \newblock In {\em Signals, Systems and Computers, 1993. 1993 Conference Record
   of The Twenty-Seventh Asilomar Conference on}, pages 40--44. IEEE, 1993.
+
+\bibitem{powell1964efficient}
+Michael~JD Powell.
+\newblock An efficient method for finding the minimum of a function of several
+  variables without calculating derivatives.
+\newblock {\em The computer journal}, 7(2):155--162, 1964.
+
+\bibitem{rubinstein2008efficient}
+Ron Rubinstein, Michael Zibulevsky, and Michael Elad.
+\newblock Efficient implementation of the k-svd algorithm using batch
+  orthogonal matching pursuit.
+\newblock {\em CS Technion}, page~40, 2008.
+
+\bibitem{tomioka2009dual}
+Ryota Tomioka and Masashi Sugiyama.
+\newblock Dual-augmented lagrangian method for efficient sparse reconstruction.
+\newblock {\em Signal Processing Letters, IEEE}, 16(12):1067--1070, 2009.
+
+\bibitem{wright1999numerical}
+SJ~Wright and J~Nocedal.
+\newblock {\em Numerical optimization}, volume~2.
+\newblock Springer New York, 1999.
 
 \bibitem{yang2010fast}
 Allen~Y Yang, Zihan Zhou, Arvind Ganesh, S~Shankar Sastry, and Yi~Ma.

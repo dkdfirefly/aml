@@ -6,6 +6,7 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{hyperref}
+\usepackage{natbib}
 
 
 \newcommand{\B}[1]{{\bf #1}}
@@ -102,22 +103,150 @@ Sparse coding problem explained in deep and ways to approximate the sparse code
 
 
 \section{Summary of sparse coding techniques used:}
+
+\vspace{.2cm}
 \subsection{FISTA}
-  -	FISTA
+\vspace{.2cm}
+The objective function that we have as defined above is:
+\begin{center}
+$F(x) = \frac{1}{2}\|y - Dx\|^2 + \lambda\|x\|_1$
+\end{center}
+
+Here the first term, $f(x)$ is a smooth, convex function with Lipschitz continuous gradient $D^T(Dx - y)$ and $L_f = \|D^TD\|$.
+
+FISTA, proposed by Beck \citep{beck2009fast} has a faster convergence rate as compared to ISTA. The main difference between the two is that the iterative shrinkage operator is not applied to the previous point alone but to another point which uses a specific linear combination of the previous two points. The algorithm in this case becomes:
+
+\begin{enumerate}
+\item \textbf{$L_f$}
+\item \textbf{Step 0. }$j_1 = x_0$ $\epsilon$ $\mathbb{R}^n, t_1 = 1$
+\item \textbf{Step $k$.}($k \geq 1$)
+\item \hspace{.4cm} $x_k = soft(j_k - \frac{1}{L_f}\nabla f(j_k), \frac{\lambda}{L_f})$
+\item \hspace{.4cm} $t_{k+1} = \frac{1+\sqrt{1+4t_k^2}}{2}$
+\item \hspace{.4cm} $y_{k+1} = x_k + \frac{t_k-1}{t_k+1}(x_k - x_{k-1})$
+\end{enumerate}
+
 \subsection{MP}
   -	MP
 \subsection{OMP}
   -	OMP
+  
+\vspace{-.2cm}
 \subsection{ALM}
-  -	ALM
+\vspace{-.2cm}
+
+The Augmented Lagrangian Method was proposed individually by Powell \citep{powell1964efficient} and Hestenes \citep{hestenes1969multiplier} and is explained in depth by Nocedal, Wright \citep{wright1999numerical}. It is an extension to the quadratic penalty function method proposed by Courant \citep{courant1943variational}. In the penalty function method, we add a quadratic penalty term for each of the constraints in a constrained optimisation problem. That is for:
+\begin{center}
+$\min\limits_x f(x)$ subj. to $c(x) = 0$
+\end{center}
+the formulation becomes,
+\begin{center}
+$\min\limits_x f(x) + \frac{\mu}{2}\|c(x)\|^2$
+\end{center}
+where $\mu$ is the penalty parameter and is always positive. We can now progressively increase $\mu$ towards $\infty$ and try to find a minimizer for the objective function.
+Thus we can convert the constrained minimisation problem into an unconstrained one. However, an ill-conditioning for the Hessian in the formulation can lead to significantly poor results for the iterative methods. To reduce this possibility, we include a Lagrange multiplier to get the Augmented Lagrangian as:
+\begin{center}
+$\min\limits_x f(x) + \frac{\mu}{2}\|c(x)\|^2 + \lambda c(x)$
+\end{center}
+
+We look at both the primal and the dual formulations of this approach.
+
+\vspace{-.2cm}
+\subsubsection{Primal ALM}
+\vspace{-.2cm}
+In our case, the problem boils down to:
+\begin{center}
+$L_{\mu}(x,e,\lambda) = \|x\|_1 + \|e\|_1 + \frac{\mu}{2}\|y - Dx - e\|^2 + \lambda (y - Dx - e)$
+\end{center}
+
+For the primal problem, Bertsekas \citep{bertsekasnonlinear} showed that there exists a $\lambda^{*}$ and $\mu^{*}$ such that
+\begin{center}
+\begin{align*}
+e_{k+1} &= arg \min_e L_{\mu}(x_k,e,\lambda_k)\\
+x_{k+1} &= arg \min_x L_{\mu}(x,e_{k+1},\lambda_k)\\
+\lambda_{k+1} &= \lambda_k + \mu(y - Dx_{k+1} - e_{k+1})
+\end{align*}
+\end{center}
+
+Of the above equations, the one for $e$ has a closed form solution. As for the update of $x$, it is a standard $L_1$ minimisation problem which we solve using the FISTA method explained above.
+
+So the overall algorithm can be summarized as in \citep{yang2010fast}:
+
+\begin{enumerate}
+\item $\textbf{Input:}y$ $\epsilon$ $\mathbb{R}^m,$ $D$ $\epsilon$ $\mathbb{R}^{mxn},$ $x_1 = 0,$ $e_1 = y,$ $\lambda_1 = 0$
+\item $\textbf{while}$ not converged($k$ = 1,2,\ldots) \textbf{do}
+\item \hspace*{.4cm} $e_{k+1} \leftarrow shrink(y - Dx_k + \frac{1}{\mu}\lambda_k, \frac{1}{\mu})$
+\item \hspace*{.4cm} $t_1 \leftarrow 1, z_1 \leftarrow x_k, w_1 \leftarrow x_k$
+\item \hspace*{.4cm} $\textbf{while}$ not converged ($l$ = 1,2,\ldots) \textbf{do}
+\item \hspace*{.8cm} $w_{l+1} \leftarrow shrink(z_l + \frac{1}{l}D^T(y - Dz_1 - e_{k+1} + \frac{1}{\mu}\lambda_k),\frac{1}{\mu L})$
+\item \hspace*{.8cm} $t_{l+1} \leftarrow \frac{1}{2}(1 + \sqrt{1+4t_l^2})$
+\item \hspace*{.8cm} $z_{l+1} \leftarrow w_{l+1} + \frac{t_l - 1}{t_l + 1}(w_{l+1} - w_l)$
+\item \hspace*{.4cm} \textbf{end while}
+\item \hspace*{.4cm} $x_{k+1} \leftarrow w_l, \lambda_{k+1} \leftarrow \lambda_k + \mu(y - Dx_{k+1} - e_{k+1})$
+\item \textbf{end while}
+\item \textbf{Output: } $x^{*} \leftarrow x_k, e^{*} \leftarrow e_k$
+\end{enumerate}
+
+While in the general case of Augmented Lagrangian methods, the value of $\mu$ is incremented after every iteration, we are holding it fixed to the initialisation value.
+
+\vspace{-.2cm}
+\subsubsection{Dual ALM}
+\vspace{-.2cm}
+The dual Augmented Lagrangian method for efficient sparse reconstruction was proposed by Tomioka  \citep{tomioka2009dual}. It tries to solve the dual of the problem we have been tackling so far as:
+
+\begin{center}
+$\max\limits_j y^Tj$ subj. to $D^Tj$ $\epsilon$ $\mathbb{B}_1^\infty$
+\end{center}
+where $\mathbb{B}_1^\infty = \{x$ $\epsilon$ $\mathbb{R}^n : \|x\|_\infty \leq 1\}$
+
+The associated Lagrangian function becomes:
+\begin{center}
+$\min\limits_{j,z} -y^Tj - \lambda^T(z-D^Tj) + \frac{\mu}{2}\|z-D^Tj\|^2$ subj. to $z$ $\epsilon$ $\mathbb{B}_1^\infty$
+\end{center} 
+
+Here, again there is a simultaneous minimization w.r.t j,$\lambda$ and z. So we adopt an alternation strategy to get the following algorithm as in \citep{yang2010fast}:
+
+\begin{enumerate}
+\item \textbf{Input:} $y$ $\epsilon$ $\mathbb{R^m}, B = [A,I]$ $\epsilon$ $\mathbb{R}^{mx(n+m)}, w_1 = 0, j_1 = 0$
+\item \textbf{while} not converged ($k$ = 1,2,\ldots) \textbf{do}
+\item \hspace{.4cm} $z_{k+1} = \mathbb{P}_{\mathbb{B}_1^\infty}(B^Tj_k + \frac{w_k}{\mu})$
+\item \hspace{.4cm} $j_{k+1} = (BB^T)^{-1}(Dz_{k+1} - (Bw_k - y)/\mu)$
+\item \hspace{.4cm} $w_{k+1} = w_k - \mu(z_{k+1} - D^Tj_{k+1})$
+\item \textbf{end while}
+\item \textbf{Output: }$\lambda^{*} \leftarrow w_k[1:n], e^{*} \leftarrow w_k[n+1:n+m], j^{*} \leftarrow j_k$
+\end{enumerate}
+
 \subsection{Feature Sign}
   -	Feature Sign
 \subsection{L1LS}
   -	L1LS
 
+\vspace{.2cm}
 \section{Experimental Setup}
+\vspace{.2cm}
+We have used the K-SVD approach suggested in the previous sections for Dictionary Learning, and have used above mentioned 7 solvers for benchmarking.
 
+8 iterations of K-SVD were performed.
+For each of the solvers, the following parameters have been varied:
+\begin{enumerate}
+\item Starting Image Noise Levels: 10, 20, 50 dB
+\item Dictionary Size: 64, 128, 256
+\end{enumerate}
+
+And the comparison is based on:
+\begin{enumerate}
+\item Execution Time
+\item SNR of the de-noised image
+\end{enumerate}
+
+All other supplied parameters were fixed across approaches, although tuning them specifically to a particular method might have resulted in better results, in order to maintain consistency across the experiment.
+
+K-SVD toolbox \citep{rubinstein2008efficient} and L1 Solvers \citep{yang2010fast}, \citep{lee2007efficient} were used for computation, and all the processes were run using matlab in nodesktop mode.
+
+Pertinent values, images and dictionaries at each of the intermediate steps were recorded and are hosted at \href{https://github.com/dkdfirefly/aml}{AML Project Results} under the respective results folders.
+
+\vspace{.2cm}
 \section{Findings}
+\vspace{.2cm}
 
 \section{Analysis}
 
