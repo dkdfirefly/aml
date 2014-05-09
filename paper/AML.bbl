@@ -24,6 +24,10 @@ Richard Courant et~al.
   vibrations.
 \newblock {\em Bull. Amer. Math. Soc}, 49(1):1--23, 1943.
 
+\bibitem{donoho2005sparselab}
+DL~Donoho, I~Drori, V~Stodden, and Y~Tsaig.
+\newblock Sparselab. software, 2005.
+
 \bibitem{hestenes1969multiplier}
 Magnus~R Hestenes.
 \newblock Multiplier and gradient methods.
@@ -41,6 +45,12 @@ Honglak Lee, Alexis Battle, Rajat Raina, and Andrew~Y Ng.
 \newblock Efficient sparse coding algorithms.
 \newblock {\em Advances in neural information processing systems}, 19:801,
   2007.
+
+\bibitem{mairal2009online}
+Julien Mairal, Francis Bach, Jean Ponce, and Guillermo Sapiro.
+\newblock Online dictionary learning for sparse coding.
+\newblock In {\em Proceedings of the 26th Annual International Conference on
+  Machine Learning}, pages 689--696. ACM, 2009.
 
 \bibitem{mallat1993matching}
 St{\'e}phane~G Mallat and Zhifeng Zhang.
