@@ -86,7 +86,7 @@ Mairal, Julien, et al, 2009 use LARS[2]  to solve the sparse coding problem. We 
 \vspace{-.2cm}
 \section{Introduction}
 \vspace{-.2cm}
-Image restoration is a widely studied problem in image processing and the common approaches to solve the problem include filtering, minimizing variations in an image etc. The problem we address in this paper is to remove noise from a given image using Dictionary Learning approach, assuming the noise to be Gaussian and additive. The approach bases itself on representing an image as a sparse representation over a good dictionary. So our problem of restoring images boils down to learning a good dictionary and finding a good representation of any given patch of an image using the dictionary. Designing dictionaries to better t the above model can be done by either selecting one from a pre-specied set of linear transforms, or by adapting the dictionary to a set of training signals. Past research has shown that dictionaries adapted to training signals lead to a lot better signal restoration than the pre-specified dictionaries. Hence, we strive to learn a dictionary from the input signals for the purpose of restoration. We have used the K-SVD algorithm as our basis for dictionary learning and explore different sparse coding methods that can be used for the same. The next section gives a Literature review of the different components of Dictionary Learning. The third section talks about our experimental setting and further sections discuss the results, our analysis and conclusion. 
+Image restoration is a widely studied problem in image processing and the common approaches to solve the problem include filtering, minimizing variations in an image etc. The problem we address in this paper is to remove noise from a given image using Dictionary Learning approach, assuming the noise to be Gaussian and additive. The approach bases itself on representing an image as a sparse representation over a good dictionary. So our problem of restoring images boils down to learning a good dictionary and finding a good representation of any given patch of an image using the dictionary. Designing dictionaries to better the above model can be done by either selecting one from a pre-specified set of linear transforms, or by adapting the dictionary to a set of training signals. Past research has shown that dictionaries adapted to training signals lead to a lot better signal restoration than the pre-specified dictionaries. Hence, we strive to learn a dictionary from the input signals for the purpose of restoration. We have used the K-SVD algorithm as our basis for dictionary learning and explore different sparse coding methods that can be used for the same. The next section gives a Literature review of the different components of Dictionary Learning. The third section talks about our experimental setting and further sections discuss the results, our analysis and conclusion. 
 
 \section{Intro to Dictionary learning}
 Intro to Dictionary learning
@@ -98,7 +98,9 @@ Intro to Dictionary learning
 The goal of K-SVD is to adapt a dictionary to the training signals such that it ensures the best sparse representation for each of the signals, under constraints of reconstruction error and sparsity. It is a two-step iterative process, which begins with a dictionary initialization.  The dictionary could be initialized with any pre-calculated well known dictionary, like DCT, or created from the noisy image by randomly selecting atoms from the patches of the given image. 
 The first step of the process determines the sparse code for the given training signals with fixed dictionary. The second step assumed fixed sparse code and updates the dictionary to better fit the data. The second step further updates the sparse representation of the training signals to accelerate convergence. \\ \\
 K-SVD tries to optimize the following overall MSE under sparsity constraints in each iteration:\\
-\[ \min_{d,x}{\|Y-DX\|_F}^2 subject to, \forall I, \|x\|_0<=L\]
+\begin{center}
+$\min\limits_{d,x}{\|Y-DX\|_F}^2$ subj. to, $\forall i, \|x_i\|_0<=L$
+\end{center}
 The algorithm is outlined below:\\
 
 \begin{enumerate}
@@ -128,49 +130,35 @@ The algorithm is outlined below:\\
 In this paper, we focus on the first step of K-SVD and that is the sparse coding step. The following sections discuss the problem of sparse coding in detail along with the algorithms we have used.
 \section{Sparse Coding}
 As mentioned before, any signal y can be represented as a linear combination of atoms in a dictionary D. Sparse coding problem aims at finding the sparsest such representation. On a high level, those atoms summarize the most important features in the input.\\
-\[\min\|x\|_0  subject to y=Dx\]
+\begin{center}
+$\min\|x\|_0$  subj. to $y=Dx$
+\end{center}
 The above equation tries to find the sparsest coefficient vector that exactly reconstructs the input signal. However, this form of exact determination is NP-hard. So, to make it easier to solve, the problem needs to be relaxed by allowing for a small amount of reconstruction error, $\epsilon$. The problem can be thus formulated as,\\
-\[\min\|x\|_0  subject to \|y-Dx\| \leq \epsilon\]
+\begin{center}
+$\min\|x\|_0$  subj. to $\|y-Dx\| \leq \epsilon$
+\end{center}
 Still the problem is computationally expensive and following are two of the well known approaches to approximate the solution to the above.
-\subsection{Relaxation (Basis pursuit)}
 
-In the relaxation methodology, the l0 norm in (2) is replaced with the l1 norm, resulting in the following equivalent objective,
-
-\[\min{\|y-Dx\|}^2 +\lambda \|x\|_1\]
-
-L1 regularization penalizes the non-sparse terms based on their actual values, which may seem unfair, but past research has shown that it leads to a very good approximation and often leads to the sparsest representation.  The resulting optimization problem is convex and unconstrained, and hence can be solved using several methods like gradient descent.
 
 
 \subsection{Greedy (Matching pursuit)}
 Greedy methodology, on the other hand, solves the problem in (2) by sequentially selecting the atom that best explains the data. Upon convergence, 
 
 
+\subsection{Relaxation (Basis pursuit)}
+
+In the relaxation methodology, the $l_0$ norm in (2) is replaced with the $l_1$ norm, resulting in the following equivalent objective,
+
+\[\min{\|y-Dx\|}^2 +\lambda \|x\|_1\]
+
+L1 regularization penalizes the non-sparse terms based on their actual values, which may seem unfair, but past research has shown that it leads to a very good approximation and often leads to the sparsest representation.  The resulting optimization problem is convex and unconstrained, and hence can be solved using several methods like gradient descent.
+
+
 
 \section{Summary of sparse coding techniques used:}
 
-\vspace{.2cm}
-\subsection{FISTA}
-\vspace{.2cm}
-The objective function that we have as defined above is:
-\begin{center}
-$F(x) = \frac{1}{2}\|y - Dx\|^2 + \lambda\|x\|_1$
-\end{center}
-
-Here the first term, $f(x)$ is a smooth, convex function with Lipschitz continuous gradient $D^T(Dx - y)$ and $L_f = \|D^TD\|$.
-
-FISTA, proposed by Beck \citep{beck2009fast} has a faster convergence rate as compared to ISTA. The main difference between the two is that the iterative shrinkage operator is not applied to the previous point alone but to another point which uses a specific linear combination of the previous two points. The algorithm in this case becomes:
-
-\begin{enumerate}
-\item \textbf{$L_f$}
-\item \textbf{Step 0. }$j_1 = x_0$ $\epsilon$ $\mathbb{R}^n, t_1 = 1$
-\item \textbf{Step $k$.}($k \geq 1$)
-\item \hspace{.4cm} $x_k = soft(j_k - \frac{1}{L_f}\nabla f(j_k), \frac{\lambda}{L_f})$
-\item \hspace{.4cm} $t_{k+1} = \frac{1+\sqrt{1+4t_k^2}}{2}$
-\item \hspace{.4cm} $y_{k+1} = x_k + \frac{t_k-1}{t_k+1}(x_k - x_{k-1})$
-\end{enumerate}
-
 \subsection{MP}
-  Matching pursuit, proposed by Mallat and Zhang et al, in 1993 is a well known greedy algorithm for learning sparse code of a signal over a given dictionary. The basic idea of the algorithm is outlined below.\\ 
+  Matching pursuit, proposed by Mallat and Zhang et al \citep{mallat1993matching} is a well known greedy algorithm for learning sparse code of a signal over a given dictionary. The basic idea of the algorithm is outlined below.\\ 
 At every step of refining the sparse code, the algorithm picks an atom of the dictionary that best represents a portion of the input signal. \\
 
 The following pseudo-code briefly describes the algorithm:\\
@@ -188,10 +176,10 @@ The following pseudo-code briefly describes the algorithm:\\
 \item \textbf{Output: }Sparse code of y over D, $x^* \leftarrow x_n$
 \end{enumerate}
 
-           The algorithm evaluates the best matching atom at every step by evaluating the inner product between the Residual, Rn and the individual atoms from the dictionary. The coefficient vector x is updated with the atom that has maximum inner product and its contribution to the signal is deducted from the signal. The process repeats until the residual falls below a threshold. The sparse coefficients thus learned is believed to be the sparsest approximation of the decomposition of the signal over the dictionary.
+           The algorithm evaluates the best matching atom at every step by evaluating the inner product between the Residual, $R_n$ and the individual atoms from the dictionary. The coefficient vector x is updated with the atom that has maximum inner product and its contribution to the signal is deducted from the signal. The process repeats until the residual falls below a threshold. The sparse coefficients thus learned is believed to be the sparsest approximation of the decomposition of the signal over the dictionary.
 
 \subsection{OMP}
-A variation of the Matching Pursuit is the Orthogonal Matching Pursuit, also a greedy method that iteratively selects the atom having highest correlation with the residual. The difference is that after adding the best matched atom to the coefficient vector, the residual is updated with the orthogonal projection of the input signal y onto the subspace of previously selected atoms. This set of selected atoms is called the active set and since the resulting residual is orthogonal to each of the atoms in the set, none of those atoms are selected in the future iterations. \\
+A variation of the Matching Pursuit is the Orthogonal Matching Pursuit \citep{pati1993orthogonal}, also a greedy method that iteratively selects the atom having highest correlation with the residual. The difference is that after adding the best matched atom to the coefficient vector, the residual is updated with the orthogonal projection of the input signal y onto the subspace of previously selected atoms. This set of selected atoms is called the active set and since the resulting residual is orthogonal to each of the atoms in the set, none of those atoms are selected in the future iterations. \\
 
 The OMP algorithm is as below:
 
@@ -208,6 +196,29 @@ The OMP algorithm is as below:
 \item \textbf{end while}
 \item \textbf{Output: }Sparse code of y over D, $x^* \leftarrow x_n$
 \end{enumerate}
+
+
+\vspace{.2cm}
+\subsection{FISTA}
+\vspace{.2cm}
+The objective function that we have as defined above is:
+\begin{center}
+$F(x) = \frac{1}{2}\|y - Dx\|^2 + \lambda\|x\|_1$
+\end{center}
+
+Here the first term, $f(x)$ is a smooth, convex function with Lipschitz continuous gradient $D^T(Dx - y)$ and $L_f = \|D^TD\|$.
+
+FISTA, proposed by Beck \citep{beck2009fast} has a faster convergence rate as compared to ISTA. The main difference between the two is that the iterative shrinkage operator is not applied to the previous point alone but to another point which uses a specific linear combination of the previous two points. The algorithm in this case becomes:
+
+\begin{enumerate}
+\item \textbf{Input: }$L_f$
+\item \textbf{Step 0. }$j_1 = x_0$ $\epsilon$ $\mathbb{R}^n, t_1 = 1$
+\item \textbf{Step $k$.}($k \geq 1$)
+\item \hspace{.4cm} $x_k = soft(j_k - \frac{1}{L_f}\nabla f(j_k), \frac{\lambda}{L_f})$
+\item \hspace{.4cm} $t_{k+1} = \frac{1+\sqrt{1+4t_k^2}}{2}$
+\item \hspace{.4cm} $y_{k+1} = x_k + \frac{t_k-1}{t_k+1}(x_k - x_{k-1})$
+\end{enumerate}
+
 
   
 \vspace{-.2cm}
@@ -283,7 +294,7 @@ The associated Lagrangian function becomes:
 $\min\limits_{j,z} -y^Tj - \lambda^T(z-D^Tj) + \frac{\mu}{2}\|z-D^Tj\|^2$ subj. to $z$ $\epsilon$ $\mathbb{B}_1^\infty$
 \end{center} 
 
-Here, again there is a simultaneous minimization w.r.t j,$\lambda$ and z. So we adopt an alternation strategy to get the following algorithm as in \citep{yang2010fast}:
+Here, again there is a simultaneous minimization w.r.t. j,$\lambda$ and z. So we adopt an alternation strategy to get the following algorithm as in \citep{yang2010fast}:
 
 \begin{enumerate}
 \item \textbf{Input:} $y$ $\epsilon$ $\mathbb{R^m}, B = [A,I]$ $\epsilon$ $\mathbb{R}^{mx(n+m)}, w_1 = 0, j_1 = 0$
@@ -304,6 +315,7 @@ Here, again there is a simultaneous minimization w.r.t j,$\lambda$ and z. So we 
 \section{Experimental Setup}
 \vspace{.2cm}
 We have used the K-SVD approach suggested in the previous sections for Dictionary Learning, and have used above mentioned 7 solvers for benchmarking.
+The dictionary has been initialised with a DCT dictionary in each of the cases.
 
 8 iterations of K-SVD were performed.
 For each of the solvers, the following parameters have been varied:
