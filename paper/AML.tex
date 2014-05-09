@@ -100,24 +100,31 @@ The first step of the process determines the sparse code for the given training 
 K-SVD tries to optimize the following overall MSE under sparsity constraints in each iteration:\\
 \[ \min_{d,x}{\|Y-DX\|_F}^2 subject to, \forall I, \|x\|_0<=L\]
 The algorithm is outlined below:\\
-\begin{verbatim}
-Initialization:  Set dictionary matrix D R (nXK) with l2 normalized columns
-Repeat until convergence:
-	Sparse coding step:
-		Compute xi for every training signal yi, by approximating the solution to the following. The different methods to solve this problem will be discussed in the next section.
-Min xi{|yi-Dx¬_i|F2} subject to |x_k|0<=L
-	Dictionary Update:
-		Update each atom k in {1,2,..K} in D_j-1 as below:
--	Let w_k be the set of input signals that use this atom D(k).
--	Find the overall error in representation, in matrix E_k, 
-E_k = Y - \sum(j!=k){d_j{x_j}^2}
--	Restrict E_k by choosing columns corresponding to w_k as E_k^R
--	Apply SVD decomposition on the restricted error matrix : E_k^R = U<>V^T
-Set d_k = U[:1]
-     And x_r^k = V[:1]*\delta(1,1)
-          Set j= j+1
 
-\end{verbatim}
+\begin{enumerate}
+\item $\textbf{Initialization:}$  Set dictionary matrix $D  \in R^{nXK}$ with $l_2$ normalized columns
+\item $\textbf{while}$ not converged($j$ = 1,2,\ldots) \textbf{do}
+\item \hspace*{.4cm} $\textbf{Sparse Coding:}$ 
+\item \hspace*{.8cm}Compute $x_i$ for every training signal $y_i$, by solving for\\
+\hspace*{.8cm}$\min_{x_i}{{\|y_i-Dx_i\|}_F}^2$ subject to $\|x_k\|_0\leq L$
+\item \hspace*{.4cm} $\textbf{Dictionary Update:}$ 
+\item \hspace*{.8cm} Update each atom k in {1,2,..K} in $D_{j-1}$ as below:
+\begin{enumerate}
+\item \hspace*{.8cm} Let $w_k$ be the set of input signals that use this atom D(k).
+\item \hspace*{.8cm} Find the overall error in representation, in matrix $E_k$,\\
+\hspace*{.8cm} $E_k = Y - \sum(j \neq k){d_j{x_j}^2}$
+\item \hspace*{.8cm} Restrict $E_k$ by choosing columns corresponding to $w_k$ as $E_k^R$
+\item \hspace*{.8cm} Apply SVD decomposition on the restricted error matrix :\\
+\hspace*{.8cm}$E_k^R = U\delta V^T$\\
+\hspace*{.8cm}Set $d_k = U[:1]$\\
+\hspace*{.8cm}and $x_r^k = V[:1]*\delta(1,1)$
+\end{enumerate}
+\item \hspace*{.8cm}j= j+1
+\item \textbf{end while}
+\item \textbf{Output: } $X^{*} \leftarrow X_j, D^{*} \leftarrow D_j$
+\end{enumerate}
+
+
 In this paper, we focus on the first step of K-SVD and that is the sparse coding step. The following sections discuss the problem of sparse coding in detail along with the algorithms we have used.
 \section{Sparse Coding}
 As mentioned before, any signal y can be represented as a linear combination of atoms in a dictionary D. Sparse coding problem aims at finding the sparsest such representation. On a high level, those atoms summarize the most important features in the input.\\
@@ -166,38 +173,41 @@ FISTA, proposed by Beck \citep{beck2009fast} has a faster convergence rate as co
   Matching pursuit, proposed by Mallat and Zhang et al, in 1993 is a well known greedy algorithm for learning sparse code of a signal over a given dictionary. The basic idea of the algorithm is outlined below.\\ 
 At every step of refining the sparse code, the algorithm picks an atom of the dictionary that best represents a portion of the input signal. \\
 
-The following pseudo-code briefly describes the algorithm:
-\begin{verbatim}
-Input: Signal – y, dictionary D 
-Output: List of Coeff: () 
-Init: 1 = y,  = 0, 
-Repeat: find  ϵ D with max inner product |<,  >| 
-            =  + <, > +1 =  -  
-           Until Stop condition:  < threshold
-\end{verbatim}
+The following pseudo-code briefly describes the algorithm:\\
+
+
+\begin{enumerate}
+\item \textbf{Input:} Training signal – y, Dictionary - D
+\item \textbf{Initialization:} $R_1=y$, $x=0, n=1$
+\item $\textbf{while}$ $R_n >$ Threshold \textbf{do}
+\item \hspace*{.4cm} Find $d_i \in $ D with max correlation with residual i.e. $<R_n,d_i>$
+\item \hspace*{.4cm} $x_i=x_i+<R,d_i>$
+\item \hspace*{.4cm} $R_{n+1}=R_n-x_id_i$
+\item \hspace*{.4cm} $n=n+1$
+\item \textbf{end while}
+\item \textbf{Output: }Sparse code of y over D, $x^* \leftarrow x_n$
+\end{enumerate}
+
            The algorithm evaluates the best matching atom at every step by evaluating the inner product between the Residual, Rn and the individual atoms from the dictionary. The coefficient vector x is updated with the atom that has maximum inner product and its contribution to the signal is deducted from the signal. The process repeats until the residual falls below a threshold. The sparse coefficients thus learned is believed to be the sparsest approximation of the decomposition of the signal over the dictionary.
 
 \subsection{OMP}
 A variation of the Matching Pursuit is the Orthogonal Matching Pursuit, also a greedy method that iteratively selects the atom having highest correlation with the residual. The difference is that after adding the best matched atom to the coefficient vector, the residual is updated with the orthogonal projection of the input signal y onto the subspace of previously selected atoms. This set of selected atoms is called the active set and since the resulting residual is orthogonal to each of the atoms in the set, none of those atoms are selected in the future iterations. \\
 
 The OMP algorithm is as below:
-\begin{verbatim}
-Step 1: Initialize the residual r0 = y and initialize the set of selected variable X(c0) =
-;. Let iteration counter i = 1.
-Step 2: Find the variable Xti
-that solves the maximization problem
-max
-t
-jX0
-t
-ri¡1j
-and add the variable Xti
-to the set of selected variables. Update ci = ci¡1 [ ftig:
-Step 3: Let Pi = X(ci)(X(ci)0X(ci))¡1X(ci)0 denote the projection onto the linear
-space spanned by the elements of X(ci). Update ri = (I ¡ Pi)y.
-Step 4: If the stopping condition is achieved, stop the algorithm. Otherwise, set
-i = i + 1 and return to Step 2.
-\end{verbatim}
+
+\begin{enumerate}
+\item \textbf{Input:} Training signal – y, Dictionary - D
+\item \textbf{Initialization:} $R_0=y$, $X(c_0)=0, n=0$
+\item $\textbf{while}$ not converged \textbf{do}
+\item \hspace*{.4cm} Solve for $X_{t_i}$ by minimizing,\\
+\hspace*{.4cm} $\max_t{{X_t}^TR_{n-1}}$\\
+\hspace*{.4cm} Add $X_{t_i}$ to the set of selected atoms; $c_n = c_{n-1}\cup {t_i}$
+\item \hspace*{.4cm} Let $P_n = X(c_n){(X(c_n)^TX(c_n))}^{-1}{X(c_n)}^T$ denote the projection onto the linear space spanned by the elements of $X(c_n)$. 
+\item \hspace*{.4cm} Update $R_n = (I - P_n)y$.
+\item \hspace*{.4cm} $n=n+1$
+\item \textbf{end while}
+\item \textbf{Output: }Sparse code of y over D, $x^* \leftarrow x_n$
+\end{enumerate}
 
   
 \vspace{-.2cm}
