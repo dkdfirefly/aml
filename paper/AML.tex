@@ -7,6 +7,8 @@
 \usepackage{amsthm}
 \usepackage{hyperref}
 \usepackage{natbib}
+\usepackage{caption}
+\usepackage{subcaption}
 
 
 \newcommand{\B}[1]{{\bf #1}}
@@ -411,10 +413,107 @@ Pertinent values, images and dictionaries at each of the intermediate steps were
 \vspace{.2cm}
 \section{Findings}
 \vspace{.2cm}
+The following figures show our results
 
+\begin{figure*}[h]
+        \centering
+        \begin{subfigure}[b]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{images/graph1}
+                \caption{Iteration 1}
+                \label{fig:dictSizeVar1}
+        \end{subfigure}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{images/graph2}
+                \caption{Iteration 8}
+                \label{fig:dictSizeVar8}
+        \end{subfigure}
+        \caption{Variation with Dictionary Size}\label{fig:dictSizeVar}
+\end{figure*}
+
+\begin{figure*}[h]
+        \centering
+        \begin{subfigure}[b]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{images/graph3}
+                \caption{Average Time per iteration}
+                \label{fig:avgTime}
+        \end{subfigure}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{images/graph4}
+                \caption{Average Time per iteration for L1LS}
+                \label{fig:avgTimeL1LS}
+        \end{subfigure}
+        \caption{Avg Execution Time}\label{fig:avgExecTime}
+\end{figure*}
+
+\begin{figure*}
+	\includegraphics[width=\textwidth]{images/graph5}
+    \caption{Average Time per iteration for others}
+    \label{fig:avgTimeOthers}
+\end{figure*}
+
+\begin{figure*}[h]
+        \centering
+        \begin{subfigure}[b]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{images/Trained_dict_DALM}
+                \caption{Trained Dictionary for DALM\\PSNR = 32.36dB}
+                \label{fig:DictDALM}
+        \end{subfigure}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{images/Trained_dict_PALM}
+                \caption{Trained Dictionary for PALM\\PSNR = 33.99dB}
+                \label{fig:DictPALM}
+        \end{subfigure}
+        \caption{Trained Dictionary}\label{fig:Dict}
+\end{figure*}
+
+\begin{figure*}[h]
+        \centering
+        \begin{subfigure}[b]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{images/Noisy}
+                \caption{Noisy Image\\PSNR = 22.12dB}
+                \label{fig:NoisyIm}
+        \end{subfigure}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{images/Denoised_DALM}
+                \caption{Denoised Image for DALM\\PSNR = 27.94dB}
+                \label{fig:DenoisedDALM}
+        \end{subfigure}
+        \caption{Images after Denoising - DALM\\Sigma = 20}\label{fig:DenoiseDALM}
+\end{figure*}
+
+
+\begin{figure*}[h]
+        \centering
+        \begin{subfigure}[b]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{images/Noisy}
+                \caption{Noisy Image\\PSNR = 22.12dB}
+                \label{fig:NoisyIm}
+        \end{subfigure}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{images/Denoised_FeatureSign}
+                \caption{Denoised Image for FeatureSign\\PSNR = 30.50dB}
+                \label{fig:DenoisedFeatureSign}
+        \end{subfigure}
+        \caption{Images after Denoising - Feature Sign\\Sigma = 20}\label{fig:DenoiseFeatureSign}
+\end{figure*}
+
+\vspace{.2cm}
 \section{Analysis}
+\vspace{.2cm}
 
+\vspace{.2cm}
 \section{Conclusion}
+\vspace{.2cm}
 
 
 \nocite{*}
