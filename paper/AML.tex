@@ -77,12 +77,7 @@ Sarah Panda\\
 
 
 \begin{abstract}
-Dictionary learning involves solving the following optimization problem: in 
-||x α|| ||α||m D, α −D 22+λ 1 where  is the input signal,   is the dictionary and   is the sparse representation of the signal. 
-x D α  
-The problem of image restoration has been addressed with a multitude of approaches. All the approaches to solve the optimisation problem fall under the 3 broad categories of  Relaxation (Basis Pursuit), Greedy approach(Matching Pursuit) or Hybrid methods. Our project  primarily focuses on the Relaxation methodology.
-Here, both   and   are unknown.  Mairal, Julien, et al, 2009 present an online learning D α   algorithm[1] which involves two optimization problem. First, assumes the   to be available and D   minimizes over . This is known as the sparse coding problem. Second, updates the   after α D   obtaining  . α  
-Mairal, Julien, et al, 2009 use LARS[2]  to solve the sparse coding problem. We propose to  compare the performance of the online dictionary learning algorithm by solving the sparse coding  problem using methods[1][5] like feature­sign [3], FISTA[4], Interior point, Sequential Shrinkage or  Iterative Shrinkage methods and Stochastic Gradient Descent in the context of image  restoration.
+Sparse Coding is the modeling of data vectors as linear combination of basis elements or atoms which form the Dictionary. In this paper we study the behaviour of various sparse coding algorithms when used in K-SVD for Dictionary learning. Dictionary learning technique has been used to denoise an image by learning a dictionary from the noisy image. We learn dictionaries of various sizes for images with varying levels of noise and compare the performance of various sparse coding algorithms in-terms of time per iteration and the SNR of the denoised image resulting from the dictionary learnt using these algorithms.
 \end{abstract}
 
 \vspace{-.2cm}
